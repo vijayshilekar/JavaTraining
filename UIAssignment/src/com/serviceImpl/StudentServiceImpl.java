@@ -14,7 +14,7 @@ import com.service.StudentService;
 /**
  * The Class StudentServiceImpl.
  */
-public class StudentServiceImpl implements StudentService{
+public class StudentServiceImpl implements StudentService {
 
 	/** The res. */
 	ResultSet res;
@@ -22,7 +22,9 @@ public class StudentServiceImpl implements StudentService{
 	/** The roll number. */
 	private int rollNumber;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.service.StudentService#saveStudent(com.model.StudentModel)
 	 */
 	@Override
@@ -33,19 +35,20 @@ public class StudentServiceImpl implements StudentService{
 			PreparedStatement stmt = con.prepareStatement(q);
 			stmt.setInt(1, s.getRollNo());
 			stmt.setString(2, s.getName());
-			stmt.setString(3,s.getAddress());
+			stmt.setString(3, s.getAddress());
 			stmt.setInt(4, s.getMarks());
-			stmt.setInt(5,s.getAge());
-			stmt.setInt(6,s.getGender());
+			stmt.setInt(5, s.getAge());
+			stmt.setInt(6, s.getGender());
 			stmt.execute();
 
 		} catch (SQLException e) {
-			System.out.println("Student Data Not Save !!");
 			e.printStackTrace();
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.service.StudentService#updateStudent(com.model.StudentModel)
 	 */
 	@Override
@@ -54,40 +57,41 @@ public class StudentServiceImpl implements StudentService{
 		try {
 			Connection con = DbHelper.getConnection();
 
-			String checkQuery = "select roll_number from studentDetails where roll_number ="+s.getRollNo();
+			String checkQuery = "select roll_number from studentDetails where roll_number =" + s.getRollNo();
 			Statement stmt = con.createStatement();
 			ResultSet res = stmt.executeQuery(checkQuery);
 
-			while (res.next()){
+			while (res.next()) {
 				rollNumber = res.getInt(1);
 			}
-			if(rollNumber == s.getRollNo()){
-				String q = "Update studentDetails set roll_number =" +s.getRollNo()+", name ='"+s.getName()+"', address= '"+s.getAddress()+"' ,marks="+s.getMarks()+", age="+s.getAge()+", gender="+s.getGender()+" where roll_number ="+s.getRollNo();
-				System.out.println(q);
+			if (rollNumber == s.getRollNo()) {
+				String q = "Update studentDetails set roll_number =" + s.getRollNo() + ", name ='" + s.getName()
+				+ "', address= '" + s.getAddress() + "' ,marks=" + s.getMarks() + ", age=" + s.getAge()
+				+ ", gender=" + s.getGender() + " where roll_number =" + s.getRollNo();
 				PreparedStatement preparedStatment = con.prepareStatement(q);
 				int count = preparedStatment.executeUpdate(q);
-				System.out.println("Updated queries: "+count);
-			}else{
-				System.out.println("either roll number already exist or not present !!");
+			} else {
 			}
 
 		} catch (SQLException e) {
-			System.out.println("Student Data Not Save !!");
 			e.printStackTrace();
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.service.StudentService#getFirstStudent()
 	 */
 	@Override
 	public ResultSet getFirstStudent() {
-		res  = null;
+		res = null;
 		try {
 			Connection con = DbHelper.getConnection();
 			String presubQuery = "(select max(id) from studentDetails where id < (SELECT id FROM studentDetails ORDER BY id ASC LIMIT 1)) as pre, ";
 			String nextSubQuery = "(select MIN(id) from studentDetails where id > (SELECT id FROM studentDetails ORDER BY id Asc LIMIT 1)) as next, ";
-			String checkQuery = "select "+presubQuery+" "+nextSubQuery+" roll_number,name,address,marks,age,gender from studentDetails ORDER BY id ASC LIMIT 1";
+			String checkQuery = "select " + presubQuery + " " + nextSubQuery
+					+ " roll_number,name,address,marks,age,gender from studentDetails ORDER BY id ASC LIMIT 1";
 			Statement stmt = con.createStatement();
 			ResultSet res = stmt.executeQuery(checkQuery);
 			return res;
@@ -98,17 +102,20 @@ public class StudentServiceImpl implements StudentService{
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.service.StudentService#getLastStudent()
 	 */
 	@Override
 	public ResultSet getLastStudent() {
-		res  = null;
+		res = null;
 		try {
 			Connection con = DbHelper.getConnection();
 			String presubQuery = "(select max(id) from studentDetails where id < (SELECT id FROM studentDetails ORDER BY id DESC LIMIT 1)) as pre, ";
 			String nextSubQuery = "(select MIN(id) from studentDetails where id > (SELECT id FROM studentDetails ORDER BY id DESC LIMIT 1)) as next, ";
-			String checkQuery = "select "+presubQuery+" "+nextSubQuery+" roll_number,name,address,marks,age,gender from studentDetails ORDER BY id DESC LIMIT 1";
+			String checkQuery = "select " + presubQuery + " " + nextSubQuery
+					+ " roll_number,name,address,marks,age,gender from studentDetails ORDER BY id DESC LIMIT 1";
 
 			Statement stmt = con.createStatement();
 			ResultSet res = stmt.executeQuery(checkQuery);
@@ -119,17 +126,20 @@ public class StudentServiceImpl implements StudentService{
 		return res;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.service.StudentService#getPreviousOrNextStudent(int)
 	 */
 	@Override
 	public ResultSet getPreviousOrNextStudent(int id) {
-		res  = null;
+		res = null;
 		try {
 			Connection con = DbHelper.getConnection();
-			String presubQuery = "(select max(id) from studentDetails where id < "+ id +") as pre, ";
-			String nextSubQuery = "(select MIN(id) from studentDetails where id > "+ id +") as next, ";
-			String checkQuery = "select "+presubQuery+" "+nextSubQuery+" roll_number,name,address,marks,age,gender from studentDetails where id ="+id;
+			String presubQuery = "(select max(id) from studentDetails where id < " + id + ") as pre, ";
+			String nextSubQuery = "(select MIN(id) from studentDetails where id > " + id + ") as next, ";
+			String checkQuery = "select " + presubQuery + " " + nextSubQuery
+					+ " roll_number,name,address,marks,age,gender from studentDetails where id =" + id;
 
 			Statement stmt = con.createStatement();
 			ResultSet res = stmt.executeQuery(checkQuery);
@@ -140,14 +150,16 @@ public class StudentServiceImpl implements StudentService{
 		return res;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.service.StudentService#deleteStudent(int)
 	 */
 	@Override
 	public void deleteStudent(int id) {
 		try {
 			Connection con = DbHelper.getConnection();
-			String checkQuery = "DELETE FROM studentDetails where id ="+id;
+			String checkQuery = "DELETE FROM studentDetails where id =" + id;
 
 			Statement stmt = con.createStatement();
 			stmt.executeUpdate(checkQuery);
@@ -156,18 +168,22 @@ public class StudentServiceImpl implements StudentService{
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.service.StudentService#searchStudent(int)
 	 */
 	@Override
 	public ResultSet searchStudent(int rollNumber) {
-		res  = null;
+		res = null;
 		try {
 			Connection con = DbHelper.getConnection();
-			String presubQuery = "(select max(id) from studentDetails where id < (SELECT id FROM studentDetails where roll_number= "+rollNumber +" ORDER BY id DESC LIMIT 1)) as pre, ";
-			String nextSubQuery = "(select min(id) from studentDetails where id > (SELECT id FROM studentDetails where roll_number= "+rollNumber +" ORDER BY id DESC LIMIT 1)) as next, ";
-			String checkQuery = "select "+presubQuery+" "+nextSubQuery+" roll_number,name,address,marks,age,gender from studentDetails where roll_number ="+rollNumber;
-			System.out.println(checkQuery);
+			String presubQuery = "(select max(id) from studentDetails where id < (SELECT id FROM studentDetails where roll_number= "
+					+ rollNumber + " ORDER BY id DESC LIMIT 1)) as pre, ";
+			String nextSubQuery = "(select min(id) from studentDetails where id > (SELECT id FROM studentDetails where roll_number= "
+					+ rollNumber + " ORDER BY id DESC LIMIT 1)) as next, ";
+			String checkQuery = "select " + presubQuery + " " + nextSubQuery
+					+ " roll_number,name,address,marks,age,gender from studentDetails where roll_number =" + rollNumber;
 			Statement stmt = con.createStatement();
 			ResultSet res = stmt.executeQuery(checkQuery);
 			return res;
